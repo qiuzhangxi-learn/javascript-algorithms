@@ -17,10 +17,10 @@ myList.insert('d', 2);
 myList.insert2('e', 3);
 
 
-const findNode = myList.find('e');
+const findNode = myList.find({ value: 'e' });
 console.log("findNode:", findNode);
 
-const findNode2 = myList.find('g');
+const findNode2 = myList.find({ value: 'g' });
 console.log("findNode:", findNode2);
 
 //b->a->d->e->c->f->g->null

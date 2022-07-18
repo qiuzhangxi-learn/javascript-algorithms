@@ -173,7 +173,7 @@ export default class List {
         // head match
         if (currentNode.value === value) {
             deletedNode = currentNode;
-            this.deletedHead();
+            this.deleteHead();
             return deletedNode;
         }
         while (currentNode) {
@@ -258,12 +258,16 @@ export default class List {
     }
 
     //find by the first node with the value
-    find(value) {
+    find({ value = undefined, callback = undefined }) {
         if (!this.head) {
             return null;
         }
         let currentNode = this.head;
         while (currentNode) {
+            if (callback && callback(currentNode.value)) {
+                return currentNode;
+              }
+
             if (currentNode.value === value) {
                 return currentNode;
             }
