@@ -10,11 +10,24 @@
     "no-lonely-if": "off",
     "class-methods-use-this": "off",
     "arrow-body-style": "off",
-    "no-loop-func": "off"
+    "no-loop-func": "off",
+    "linebreak-style":"off",
+    "max-classes-per-file": ["error", 2],
+    "spaced-comment": "off",
+    "indent": "off",
+    "no-const-assign": "off",
+    "quotes":"off",
+    "import/extensions": "off",
+    "no-multiple-empty-lines":"off",
+    "prefer-template":"off",
+    "no-else-return": "off"
   },
   "settings": {
     "react": {
       "version": "latest"
     }
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022
   }
 }

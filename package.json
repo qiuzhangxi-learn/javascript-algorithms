@@ -2,6 +2,7 @@
   "name": "javascript-algorithms-and-data-structures",
   "version": "0.0.4",
   "description": "Algorithms and data-structures implemented on JavaScript",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trekhleb/javascript-algorithms.git"
@@ -31,8 +32,7 @@
     "lint": "eslint ./src/**",
     "test": "jest",
     "coverage": "npm run test -- --coverage",
-    "ci": "npm run lint && npm run coverage",
-    "prepare": "husky install"
+    "ci": "npm run lint && npm run coverage"
   },
   "devDependencies": {
     "@babel/cli": "7.16.8",
@@ -45,7 +45,6 @@
     "eslint-plugin-jest": "25.7.0",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.28.0",
-    "husky": "7.0.4",
     "jest": "27.4.7"
   },
   "engines": {
