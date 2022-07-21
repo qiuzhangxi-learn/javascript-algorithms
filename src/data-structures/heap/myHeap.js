@@ -160,7 +160,7 @@ export class Heap {
             if (indexToRemove === this.heapContainer.length - 1) {
                 this.heapContainer.pop();
             } else {
-                this.heapContainer[numberOfItemsToRemove] = this.heapContainer.pop();
+                this.heapContainer[indexToRemove] = this.heapContainer.pop();
                 if (
                     this.hasLeftChildren(indexToRemove) && (!this.hasParent(indexToRemove)
                     || this.pairIsInCorrectOrder(this.parent(indexToRemove), this.heapContainer[indexToRemove]))

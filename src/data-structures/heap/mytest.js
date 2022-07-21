@@ -47,6 +47,8 @@ minHeap.add(3);
 //      8           5
 // 17       9     26    20
 
+console.log("minHeap:::::::::", minHeap);
+
 
 
 
