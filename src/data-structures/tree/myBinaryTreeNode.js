@@ -54,13 +54,33 @@ export default class BinaryTreeNode {
     //高度的定义：高度是指从该节点到叶子节点的最长简单路径边的条数。
     //树的高度=树的深度=层数
     //注意：leetcode中都是以节点为一度，维基百科是以边为一度，以leetcode的为主；
-    // nodeHeight(node) {
-    //     if (!node) {
-    //         return 0;
-    //     }
-    //     return Math.max(this.nodeHeight(node.left), this.nodeHeight(node.right)) + 1;
-    // }
-    //深度需要用到Root，因此根据node来获得高度和深度都应该在树的类里面写，而不是在Node上写。
+    nodeHeight(node) {
+        if (!node) {
+            return 0;
+        }
+        return Math.max(this.nodeHeight(node.left), this.nodeHeight(node.right)) + 1;
+    }
+
+    nodeDeep(node) {
+        if (!node) {
+            return 0;
+        }
+        return this.nodeDeep(node.parent) + 1;
+    }
+
+    nodeLeftHeight(node) {
+        if (!node || !node.left) {
+            return 0;
+        }
+        return Math.max(this.nodeHeight(node.left.left), this.nodeHeight(node.left.right)) + 1;
+    }
+
+    nodeRightHeight(node) {
+        if (!node || !node.right) {
+            return 0;
+        }
+        return Math.max(this.nodeHeight(node.right.left), this.nodeHeight(node.right.right)) + 1;
+    }
 
     get uncle() {
         if (!this.parent) {

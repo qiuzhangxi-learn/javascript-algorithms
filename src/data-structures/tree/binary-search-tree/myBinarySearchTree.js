@@ -12,6 +12,10 @@ export default class BinarySearchTree {
         return this.root.insert(value);
     }
 
+    find(value) {
+        return this.root.find(value);
+    }
+
     contains(value) {
         return this.root.contains(value);
     }
@@ -22,5 +26,13 @@ export default class BinarySearchTree {
 
     toString() {
         return this.root.toString();
+    }
+
+    height() {
+        return this.root.height2();
+    }
+
+    deep() {
+        return this.height();
     }
 }
