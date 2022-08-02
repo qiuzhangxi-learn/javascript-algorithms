@@ -192,4 +192,18 @@ export default class BinaryTreeNode {
     toString() {
         return this.traverseInOrder().toString();
     }
+
+    isParentLeftChild() {
+        if (this.parent && this.parent.left && this.nodeComparator.equal(this, this.parent.left)) {
+            return true;
+        }
+        return false;
+    }
+
+    isParentRightChild() {
+        if (this.parent && this.parent.right && this.nodeComparator.equal(this, this.parent.right)) {
+            return true;
+        }
+        return false;
+    }
 }
