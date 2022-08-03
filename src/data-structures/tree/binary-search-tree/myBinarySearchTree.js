@@ -35,4 +35,8 @@ export default class BinarySearchTree {
     deep() {
         return this.height();
     }
+
+    successor(value) {
+        return this.root.successor(value);
+    }
 }

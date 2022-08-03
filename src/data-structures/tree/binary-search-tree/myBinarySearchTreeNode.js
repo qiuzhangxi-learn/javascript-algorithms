@@ -116,4 +116,21 @@ export default class BinarySearchTreeNode extends BinaryTreeNode {
 
         return true;
     }
+
+    successor(value) {
+        const nodeToSuccesor = this.find(value);
+        if (!nodeToSuccesor) {
+            throw new Error('Item not found in the tree');
+        }
+        let currentNode = nodeToSuccesor.right;
+
+        if (!currentNode) {
+            return nodeToSuccesor.parent;
+        }
+
+        while (!currentNode.left) {
+            currentNode = currentNode.left;
+        }
+        return currentNode;
+    }
 }
