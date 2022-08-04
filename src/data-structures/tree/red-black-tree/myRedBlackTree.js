@@ -1,4 +1,5 @@
 import BinarySearchTree from "../binary-search-tree/myBinarySearchTree.js";
+import BinarySearchTreeNode from "../binary-search-tree/myBinarySearchTreeNode.js";
 
 
 const RED_BLACK_TREE_COLORS = {
@@ -102,6 +103,147 @@ export default class RedBlackTree extends BinarySearchTree {
             
         }
     }
+
+    remove2(value) {
+        const nodeToReplace = this.find(value);
+        // const copyNodeToReplace = new BinarySearchTreeNode();
+        // copyNodeToReplace.value = nodeToReplace.value;
+        // copyNodeToReplace.left = nodeToReplace.left;
+        // copyNodeToReplace.right = nodeToReplace.right;
+        // copyNodeToReplace.parent = nodeToReplace.parent;
+        // copyNodeToReplace.meta = nodeToReplace.meta;
+        // copyNodeToReplace.nodeComparator = nodeToReplace.nodeComparator;
+
+        let replaceNode = null;
+        if (nodeToReplace.left && nodeToReplace.right) {
+            //in this case(have right branch), the successor node must be have one or no child
+            const successorNode = this.successor(value);
+            if (successorNode.left) {
+                replaceNode = successorNode.left;
+            } else {
+                replaceNode = successorNode.right;
+            }
+        }
+        if (!nodeToReplace.left && !nodeToReplace.right) {
+            replaceNode = null;
+        }
+        if (nodeToReplace.left) {
+            replaceNode = nodeToReplace.left;
+        } else {
+            replaceNode = nodeToReplace.right;
+        }
+
+        const deleteAndReplaceBlack = ((replaceNode == null || this.isNodeBlack(replaceNode)) && this.isNodeBlack(nodeToReplace));
+
+        //case1 delete leaf node
+        if (!replaceNode) {
+            if (this.root.nodeComparator.equal(this.root, nodeToReplace)) {
+                //case1.1 root was deleted
+                return;
+            }
+            if (deleteAndReplaceBlack) {
+                //case 1.2 deleteAndReplaceBlack
+                this.fixDoubleBlack(nodeToReplace);
+            }
+            //case 1.3 delete and replace one red one black
+            //because null node always is black node, so if leaf node is red, just delete. That does not change black deep.
+        } else {
+            //case 2 delete node that have one children(those nodes have two children will be recursed to leaf node or have one children)
+            if (deleteAndReplaceBlack) {
+                //case a deleteAndReplaceBlack
+                this.fixDoubleBlack(nodeToReplace);
+            } else {
+                //case b delete and replace one red one black
+                // if delete node is red, no need to change
+                // if delete node is black, just need to make replace node as black node
+                this.makeNodeBlack(replaceNode);
+            }
+        }
+        super.remove(nodeToReplace);
+    }
+
+    fixDoubleBlack(nodeToReplace) {
+        if (!nodeToReplace.parent) {
+            //no the second branch, so even though one branch's black deep reduce one, that is fine.
+            return;
+        }
+        if (!nodeToReplace.sibling) {
+            //case 1 no sibling
+            //because one branch's black deep reduce one, so the other also branch need to reduce.
+            //just recurse to the parent of nodeToReplace
+            this.fixDoubleBlack(nodeToReplace.parent);
+        } else {
+            //case 2 have sibling
+
+            if (this.isNodeBlack(nodeToReplace.sibling) && (this.haveRedLeftChildren(nodeToReplace.sibling)
+            || this.haveRedRightChildren(nodeToReplace.sibling))) {
+                //case 2.1 sibling is black node and at least one of sibling's children is red
+                // one brach black deep +1 by this red node, that leads to balance
+
+                if (this.nodeComparator.equal(nodeToReplace.sibling, nodeToReplace.left)) {
+                    if (this.haveRedLeftChildren(nodeToReplace.sibling)) {
+                        //case 2.1.1 sibling is back left node and have left red or both red children
+                        //perform right right rotation
+                        this.rotateRightRight(nodeToReplace.sibling.parent);
+                        //make this left node as black children
+                        this.makeNodeBlack(nodeToReplace.sibling.left);
+                    } else {
+                        //case 2.1.2 sibling is back left node and just have right red children
+                        //perform left right rotation
+                        this.rotateLeftLeft(nodeToReplace.sibling);
+                        this.rotateRightRight(nodeToReplace.sibling.parent);
+                        //make this red left children as black children
+                        this.makeNodeBlack(nodeToReplace.sibling.left);
+                    }
+                } else {
+                    if (this.haveRedRightChildren(nodeToReplace.sibling)) {
+                        //case 2.1.3 sibling is back right node and have right red or both red children
+                        //perform left left rotation
+                        this.rotateLeftLeft(nodeToReplace.sibling.parent);
+                        //make this right node as black children
+                        this.makeNodeBlack(nodeToReplace.sibling.right);
+                    } else {
+                        //case 2.1.4 sibling is back left node and just have right red children
+                        //perform right left rotation
+                        this.rotateRightRight(nodeToReplace.sibling);
+                        this.rotateLeftLeft(nodeToReplace.sibling.parent);
+                        //make this red right children as black children
+                        this.makeNodeBlack(nodeToReplace.sibling.right);
+                    }
+                }
+            }
+            if (this.isNodeBlack(nodeToReplace.sibling) && !this.haveRedLeftChildren(nodeToReplace.sibling)
+            && !this.haveRedRightChildren(nodeToReplace.sibling)) {
+                //case 2.2 sibling is black node and both two children are black
+                //one branch black deep reduce one by make black Node as red node
+                // first change the sibling to red
+                this.makeNodeRed(nodeToReplace.sibling);
+                if (this.isNodeRed(nodeToReplace.sibling.parent)) {
+                    // if nodeToReplace.sibling.parent is red,
+                    //let it also to be black so the higher and other branch black deep increase one so that the tree balance
+                    this.makeNodeBlack(nodeToReplace.sibling.parent);
+                } else {
+                    // if nodeToReplace.sibling.parent is black, keep recurse to make other branch black deep increase one so that the tree balance
+                    this.fixDoubleBlack(nodeToReplace.sibling.parent);
+                }
+            }
+        }
+    }
+
+    haveRedLeftChildren(node) {
+        if (node && node.left && this.isNodeRed(node.left)) {
+            return true;
+        }
+        return false;
+    }
+
+    haveRedRightChildren(node) {
+        if (node && node.right && this.isNodeRed(node.right)) {
+            return true;
+        }
+        return false;
+    }
+
 
 
     balance(node) {

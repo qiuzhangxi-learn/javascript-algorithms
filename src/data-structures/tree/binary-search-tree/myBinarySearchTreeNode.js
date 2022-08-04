@@ -85,6 +85,7 @@ export default class BinarySearchTreeNode extends BinaryTreeNode {
             if (parent) {
                 parent.removeChild(nodeToRemove);
             } else {
+                //root
                 nodeToRemove.setValue(undefined);
             }
         } else if (nodeToRemove.left && nodeToRemove.right) {
@@ -127,8 +128,7 @@ export default class BinarySearchTreeNode extends BinaryTreeNode {
         if (!currentNode) {
             return nodeToSuccesor.parent;
         }
-
-        while (!currentNode.left) {
+        while (currentNode.left) {
             currentNode = currentNode.left;
         }
         return currentNode;

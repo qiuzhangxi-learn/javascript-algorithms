@@ -102,6 +102,20 @@ export default class BinaryTreeNode {
         return this.left;
     }
 
+    get sibling() {
+        if (!this.parent) {
+            return undefined;
+        }
+        if (this.parent.left && this.parent.right) {
+            if (this.nodeComparator.equal(this, this.parent.left)) {
+                return this.parent.right;
+            } else {
+                return this.parent.left;
+            }
+        }
+        return undefined;
+    }
+
     setValue(value) {
         this.value = value;
         return this;
