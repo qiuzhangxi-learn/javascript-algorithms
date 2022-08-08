@@ -75,6 +75,8 @@ export default class AvlTree extends BinarySearchTree {
         // Detach left node from root node.
         const leftNode = rootNode.left;
         const grandParent = rootNode.parent;
+        // must firstly detach the node
+        rootNode.setLeft(null);
 
         // Make left node to be a child of rootNode's parent.
         this.swapParentChild(rootNode, leftNode, grandParent);
@@ -93,6 +95,8 @@ export default class AvlTree extends BinarySearchTree {
         // Detach left node from root node.
         const rightNode = rootNode.right;
         const grandParent = rootNode.parent;
+        // must firstly detach the node
+        rootNode.setRight(null);
 
         // Make left node to be a child of rootNode's parent.
         this.swapParentChild(rootNode, rightNode, grandParent);

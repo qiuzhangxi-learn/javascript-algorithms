@@ -1,7 +1,7 @@
 
 import List from '../linked-list/myLinkedList.js';
 
-export default class myQueue {
+export default class Queue {
     constructor() {
       // We're going to implement Queue based on LinkedList since the two
       // structures are quite similar. Namely, they both operate mostly on

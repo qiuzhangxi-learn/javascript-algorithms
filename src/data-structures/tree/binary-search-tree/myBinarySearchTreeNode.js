@@ -48,11 +48,11 @@ export default class BinarySearchTreeNode extends BinaryTreeNode {
             return this;
         }
 
-        if (this.nodeValueComparator.lessThan(value, this.value)) {
+        if (this.nodeValueComparator.lessThan(value, this.value) && this.left) {
             return this.left.find(value);
         }
 
-        if (this.nodeValueComparator.greaterThan(value, this.value)) {
+        if (this.nodeValueComparator.greaterThan(value, this.value) && this.right) {
             return this.right.find(value);
         }
 
@@ -71,6 +71,7 @@ export default class BinarySearchTreeNode extends BinaryTreeNode {
         return !!this.find(value);
     }
 
+    //can use predecessor node or successor node
     remove(value) {
         const nodeToRemove = this.find(value);
 

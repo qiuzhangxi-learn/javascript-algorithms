@@ -1,5 +1,6 @@
 import Comparator from "../../utils/comparator/Comparator.js";
 import HashTable from "../hash-table/myHashTable.js";
+import Queue from "../queue/myQueue.js";
 
 
 export default class BinaryTreeNode {
@@ -96,10 +97,10 @@ export default class BinaryTreeNode {
         }
 
         if (this.nodeComparator.equal(this.parent, this.parent.parent.left)) {
-            return this.right;
+            return this.parent.parent.right;
         }
 
-        return this.left;
+        return this.parent.parent.left;
     }
 
     get sibling() {
@@ -168,11 +169,13 @@ export default class BinaryTreeNode {
 
         if (this.left && this.nodeComparator.equal(this.left, nodeToReplace)) {
             this.left = replacementNode;
+            this.left.parent = this;
             return true;
         }
 
         if (this.right && this.nodeComparator.equal(this.right, nodeToReplace)) {
             this.right = replacementNode;
+            this.right.parent = this;
             return true;
         }
         return false;
@@ -203,8 +206,60 @@ export default class BinaryTreeNode {
         return traverse;
     }
 
+    traverseInOrderWithMeta(metaName) {
+        let traverse = [];
+
+        // Add left node.
+        if (this.left) {
+          traverse = traverse.concat(this.left.traverseInOrderWithMeta(metaName));
+        }
+
+        const node = { value: this.value };
+        node[metaName] = this.meta.get(metaName);
+        // Add root.
+        traverse.push(node);
+
+        // Add right node.
+        if (this.right) {
+          traverse = traverse.concat(this.right.traverseInOrderWithMeta(metaName));
+        }
+
+        return traverse;
+    }
+
     toString() {
         return this.traverseInOrder().toString();
+    }
+
+    toStringWithMeta(metaName) {
+        if (metaName === 'color') {
+            return this.traverseInOrderWithMeta(metaName).map((node) => `${node.value}` + (node[metaName] === 'red' ? '-red' : '')).toString();
+        }
+        return this.traverseInOrderWithMeta(metaName).map((node) => `${node.value}-` + node[metaName]).toString();
+    }
+
+    TreeStructure() {
+        const result = [];
+        const queue = new Queue();
+        queue.enqueue(this);
+        result.push(this.value);
+        while (!queue.isEmpty()) {
+            const currentNode = queue.dequeue();
+            //result.push(currentNode.value);
+            if (currentNode.left) {
+                result.push(currentNode.left.value);
+                queue.enqueue(currentNode.left);
+            } else {
+                result.push('null');
+            }
+            if (currentNode.right) {
+                result.push(currentNode.right.value);
+                queue.enqueue(currentNode.right);
+            } else {
+                result.push('null');
+            }
+        }
+        return result;
     }
 
     isParentLeftChild() {

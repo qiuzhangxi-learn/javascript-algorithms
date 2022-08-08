@@ -1,5 +1,4 @@
 import BinarySearchTree from "../binary-search-tree/myBinarySearchTree.js";
-import BinarySearchTreeNode from "../binary-search-tree/myBinarySearchTreeNode.js";
 
 
 const RED_BLACK_TREE_COLORS = {
@@ -29,7 +28,7 @@ export default class RedBlackTree extends BinarySearchTree {
        * @param {BinarySearchTreeNode|BinaryTreeNode} node
        * @return {BinarySearchTreeNode}
        */
-      makeNodeBlack(node) {
+    makeNodeBlack(node) {
         node.meta.set(COLOR_PROP_NAME, RED_BLACK_TREE_COLORS.black);
         return node;
     }
@@ -48,64 +47,62 @@ export default class RedBlackTree extends BinarySearchTree {
         return insertNode;
     }
 
+    // remove(value) {
+    //     //利用替代再删除
+    //     const nodeToReplace = this.find(value);
+    //     let replaceNode = null;
+    //     if (nodeToReplace.left && nodeToReplace.right) {
+    //         replaceNode = this.successor(value);
+    //     }
+    //     if (!nodeToReplace.left && !nodeToReplace.right) {
+    //         replaceNode = null;
+    //     }
+    //     if (nodeToReplace.left) {
+    //         replaceNode = nodeToReplace.left;
+    //     } else {
+    //         replaceNode = nodeToReplace.right;
+    //     }
+
+    //     const deleteAndReplaceBlack = ((replaceNode == null || this.isNodeBlack(replaceNode)) && this.isNodeBlack(nodeToReplace));
+
+    //     //删除的是叶子节点
+    //     if (!replaceNode) {
+    //         if (this.nodeComparator.equal(nodeToReplace, this.root)) {
+    //             this.root = null;
+    //         } else {
+    //             //case1 deleteAndReplaceBlack
+    //             if (deleteAndReplaceBlack) {
+    //                 this.fixDoubleBlack(nodeToReplace);
+    //             } else {
+    //                 //case2 nodeToReplace or replaceNode is red, but not both
+    //                 // if (nodeToReplace.uncle) {
+    //                 //     this.makeNodeRed(nodeToReplace.uncle);
+    //                 // }
+    //             }
+
+    //             //delete node
+    //             if (nodeToReplace.isParentLeftChild()) {
+    //                 nodeToReplace.parent.left = null;
+    //             } else {
+    //                 nodeToReplace.parent.right = null;
+    //             }
+    //         }
+    //         return;
+    //     }
+
+    //     //删除的是非叶子节点,且有两个child
+    //     if (nodeToReplace.left && nodeToReplace.right) {
+    //         this.swapNodeValue(nodeToReplace, replaceNode);
+    //         this.remove(replaceNode.value);
+    //     }
+    //     //删除的是非叶子节点,且只有1个child
+    //     if (this.nodeComparator.equal(nodeToReplace, this.root)) {
+    //         this.root = replaceNode;
+    //     }
+    // }
+
     remove(value) {
-        //利用替代再删除
-        const nodeToReplace = this.find(value);
-        let replaceNode = null;
-        if (nodeToReplace.left && nodeToReplace.right) {
-            replaceNode = this.successor(value);
-        }
-        if (!nodeToReplace.left && !nodeToReplace.right) {
-            replaceNode = null;
-        }
-        if (nodeToReplace.left) {
-            replaceNode = nodeToReplace.left;
-        } else {
-            replaceNode = nodeToReplace.right;
-        }
-
-        const deleteAndReplaceBlack = ((replaceNode == null || this.isNodeBlack(replaceNode)) && this.isNodeBlack(nodeToReplace));
-
-        //删除的是叶子节点
-        if (!replaceNode) {
-            if (this.nodeComparator.equal(nodeToReplace, this.root)) {
-                this.root = null;
-            } else {
-                //case1 deleteAndReplaceBlack
-                if (deleteAndReplaceBlack) {
-                    this.fixDoubleBlack(nodeToReplace);
-                } else {
-                    //case2 nodeToReplace or replaceNode is red, but not both
-                    // if (nodeToReplace.uncle) {
-                    //     this.makeNodeRed(nodeToReplace.uncle);
-                    // }
-                }
-
-                //delete node
-                if (nodeToReplace.isParentLeftChild()) {
-                    nodeToReplace.parent.left = null;
-                } else {
-                    nodeToReplace.parent.right = null;
-                }
-            }
-            return;
-        }
-
-        //删除的是非叶子节点,且有两个child
-        if (nodeToReplace.left && nodeToReplace.right) {
-            this.swapNodeValue(nodeToReplace, replaceNode);
-            this.remove(replaceNode.value);
-        }
-        //删除的是非叶子节点,且只有1个child
-        if (this.nodeComparator.equal(nodeToReplace, this.root)) {
-            this.root = replaceNode;
-        } else {
-            
-        }
-    }
-
-    remove2(value) {
-        const nodeToReplace = this.find(value);
+        let nodeToReplace = this.find(value);
         // const copyNodeToReplace = new BinarySearchTreeNode();
         // copyNodeToReplace.value = nodeToReplace.value;
         // copyNodeToReplace.left = nodeToReplace.left;
@@ -118,6 +115,7 @@ export default class RedBlackTree extends BinarySearchTree {
         if (nodeToReplace.left && nodeToReplace.right) {
             //in this case(have right branch), the successor node must be have one or no child
             const successorNode = this.successor(value);
+            nodeToReplace = successorNode;
             if (successorNode.left) {
                 replaceNode = successorNode.left;
             } else {
@@ -127,9 +125,10 @@ export default class RedBlackTree extends BinarySearchTree {
         if (!nodeToReplace.left && !nodeToReplace.right) {
             replaceNode = null;
         }
-        if (nodeToReplace.left) {
+        if (nodeToReplace.left && !nodeToReplace.right) {
             replaceNode = nodeToReplace.left;
-        } else {
+        }
+        if (!nodeToReplace.left && nodeToReplace.right) {
             replaceNode = nodeToReplace.right;
         }
 
@@ -137,10 +136,6 @@ export default class RedBlackTree extends BinarySearchTree {
 
         //case1 delete leaf node
         if (!replaceNode) {
-            if (this.root.nodeComparator.equal(this.root, nodeToReplace)) {
-                //case1.1 root was deleted
-                return;
-            }
             if (deleteAndReplaceBlack) {
                 //case 1.2 deleteAndReplaceBlack
                 this.fixDoubleBlack(nodeToReplace);
@@ -159,7 +154,7 @@ export default class RedBlackTree extends BinarySearchTree {
                 this.makeNodeBlack(replaceNode);
             }
         }
-        super.remove(nodeToReplace);
+        super.remove(value);
     }
 
     fixDoubleBlack(nodeToReplace) {
@@ -182,33 +177,33 @@ export default class RedBlackTree extends BinarySearchTree {
 
                 if (this.nodeComparator.equal(nodeToReplace.sibling, nodeToReplace.left)) {
                     if (this.haveRedLeftChildren(nodeToReplace.sibling)) {
-                        //case 2.1.1 sibling is back left node and have left red or both red children
-                        //perform right right rotation
-                        this.rotateRightRight(nodeToReplace.sibling.parent);
+                        //case 2.1.1 sibling is black left node and have left red or both red children
                         //make this left node as black children
                         this.makeNodeBlack(nodeToReplace.sibling.left);
+                        //perform right right rotation
+                        this.rotateRightRight(nodeToReplace.sibling.parent);
                     } else {
-                        //case 2.1.2 sibling is back left node and just have right red children
+                        //case 2.1.2 sibling is black left node and just have right red children
+                        //make this red left children as black children
+                        this.makeNodeBlack(nodeToReplace.sibling.left);
                         //perform left right rotation
                         this.rotateLeftLeft(nodeToReplace.sibling);
                         this.rotateRightRight(nodeToReplace.sibling.parent);
-                        //make this red left children as black children
-                        this.makeNodeBlack(nodeToReplace.sibling.left);
                     }
                 } else {
                     if (this.haveRedRightChildren(nodeToReplace.sibling)) {
-                        //case 2.1.3 sibling is back right node and have right red or both red children
-                        //perform left left rotation
-                        this.rotateLeftLeft(nodeToReplace.sibling.parent);
+                        //case 2.1.3 sibling is black right node and have right red or both red children
                         //make this right node as black children
                         this.makeNodeBlack(nodeToReplace.sibling.right);
+                        //perform left left rotation
+                        this.rotateLeftLeft(nodeToReplace.sibling.parent);
                     } else {
-                        //case 2.1.4 sibling is back left node and just have right red children
+                        //case 2.1.4 sibling is black left node and just have right red children
+                        //make this red right children as black children
+                        this.makeNodeBlack(nodeToReplace.sibling.right);
                         //perform right left rotation
                         this.rotateRightRight(nodeToReplace.sibling);
                         this.rotateLeftLeft(nodeToReplace.sibling.parent);
-                        //make this red right children as black children
-                        this.makeNodeBlack(nodeToReplace.sibling.right);
                     }
                 }
             }
@@ -270,7 +265,7 @@ export default class RedBlackTree extends BinarySearchTree {
                 return;
             }
             this.balance(grandParent);
-        } else if (!node.uncle || this.isNodeBlack(node.black)) {
+        } else if (!node.uncle || this.isNodeBlack(node.uncle)) {
             if (grandParent) {
                 let newGrandParent;
                 if (this.nodeComparator.equal(node.parent, grandParent.left)) {
@@ -291,7 +286,6 @@ export default class RedBlackTree extends BinarySearchTree {
                     this.root = newGrandParent;
                     this.makeNodeBlack(this.root);
                 }
-                this.balance(newGrandParent);
             }
         }
     }
@@ -321,6 +315,8 @@ export default class RedBlackTree extends BinarySearchTree {
         // Detach left node from root node.
         const leftNode = rootNode.left;
         const grandParent = rootNode.parent;
+        // must firstly detach the node
+        rootNode.setLeft(null);
 
         // Make left node to be a child of rootNode's parent.
         this.swapParentChild(rootNode, leftNode, grandParent);
@@ -340,6 +336,8 @@ export default class RedBlackTree extends BinarySearchTree {
         // Detach left node from root node.
         const rightNode = rootNode.right;
         const grandParent = rootNode.parent;
+        // must firstly detach the node
+        rootNode.setRight(null);
 
         // Make left node to be a child of rootNode's parent.
         this.swapParentChild(rootNode, rightNode, grandParent);
@@ -357,11 +355,18 @@ export default class RedBlackTree extends BinarySearchTree {
 
     rotateLeftRight(rootNode) {
         this.rotateLeftLeft(rootNode.left);
-        this.rotateRightRight(rootNode);
+        return this.rotateRightRight(rootNode);
     }
 
     rotateRightLeft(rootNode) {
         this.rotateRightRight(rootNode.right);
-        this.rotateRightRight(rootNode);
+        return this.rotateLeftLeft(rootNode);
+    }
+
+    toString() {
+        if (this.root.value) {
+            return this.toStringWithMeta(COLOR_PROP_NAME);
+        }
+        return null;
     }
 }
