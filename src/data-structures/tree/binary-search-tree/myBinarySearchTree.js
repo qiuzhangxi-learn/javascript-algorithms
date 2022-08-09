@@ -20,8 +20,8 @@ export default class BinarySearchTree {
         return this.root.contains(value);
     }
 
-    remove(value) {
-        return this.root.remove(value);
+    remove(value, withSuccessor = true) {
+        return this.root.remove(value, withSuccessor);
     }
 
     toString() {
@@ -44,19 +44,23 @@ export default class BinarySearchTree {
         return this.root.successor(value);
     }
 
-    printTree() {
-        const treeArray = this.root.TreeStructure();
+    predecessor(value) {
+        return this.root.predecessor(value);
+    }
+
+    paintTree(metaName) {
         //including null
+        const treeArray = this.root.printTree(metaName);
         const nodeNumbers = treeArray.length;
-        let result = '**************************************************~*********************************************************************************\r\n*************************!*************************************************************@********************************************\r\n**************#**************************$**********************************%*********************************^*********************\r\n********&************q*************w***********e******************t*************y*****************u*****************i*************\r\n**o*******p********[****]******a********s*****d****f************g******h******j*****k***********z******x******c*********v********\r\n';
-        const matchAlpha = '~!@#$%^&qwetyuiop[]asdfghjklzxcvbm';
+        let result = '**************************************************@*********************************************************************************\r\n*************************@*************************************************************@*******************************************\r\n**************@*********************@************************************@****************************@*************************\r\n********@************@**********@********@************************@************@*************@****************@******************\r\n****@******@*****@******@****@***@****@****@******************@*******@****@*****@******@********@*******@*************@*****\r\n';
+        const matchChart = '@';
 
         for (let i = 0; i < nodeNumbers; i += 1) {
-            if (treeArray[i] === 'null') {
-                result = result.replace(matchAlpha.charAt(i), ' ');
+            if (treeArray[i] === null) {
+                result = result.replace(matchChart, ' ');
+            } else {
+                result = result.replace(matchChart, treeArray[i]);
             }
-            result = result.replace(matchAlpha.charAt(i), treeArray[i].toString());
-            //result[index] = treeArray[i].toString();
         }
         return result;
     }

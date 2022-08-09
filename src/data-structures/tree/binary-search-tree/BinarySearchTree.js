@@ -31,8 +31,9 @@ export default class BinarySearchTree {
    * @param {*} value
    * @return {boolean}
    */
-  remove(value) {
-    return this.root.remove(value);
+
+  remove(value, withSuccessor = true) {
+    return this.root.remove(value, withSuccessor);
   }
 
   /**

@@ -47,88 +47,29 @@ export default class RedBlackTree extends BinarySearchTree {
         return insertNode;
     }
 
-    // remove(value) {
-    //     //利用替代再删除
-    //     const nodeToReplace = this.find(value);
-    //     let replaceNode = null;
-    //     if (nodeToReplace.left && nodeToReplace.right) {
-    //         replaceNode = this.successor(value);
-    //     }
-    //     if (!nodeToReplace.left && !nodeToReplace.right) {
-    //         replaceNode = null;
-    //     }
-    //     if (nodeToReplace.left) {
-    //         replaceNode = nodeToReplace.left;
-    //     } else {
-    //         replaceNode = nodeToReplace.right;
-    //     }
-
-    //     const deleteAndReplaceBlack = ((replaceNode == null || this.isNodeBlack(replaceNode)) && this.isNodeBlack(nodeToReplace));
-
-    //     //删除的是叶子节点
-    //     if (!replaceNode) {
-    //         if (this.nodeComparator.equal(nodeToReplace, this.root)) {
-    //             this.root = null;
-    //         } else {
-    //             //case1 deleteAndReplaceBlack
-    //             if (deleteAndReplaceBlack) {
-    //                 this.fixDoubleBlack(nodeToReplace);
-    //             } else {
-    //                 //case2 nodeToReplace or replaceNode is red, but not both
-    //                 // if (nodeToReplace.uncle) {
-    //                 //     this.makeNodeRed(nodeToReplace.uncle);
-    //                 // }
-    //             }
-
-    //             //delete node
-    //             if (nodeToReplace.isParentLeftChild()) {
-    //                 nodeToReplace.parent.left = null;
-    //             } else {
-    //                 nodeToReplace.parent.right = null;
-    //             }
-    //         }
-    //         return;
-    //     }
-
-    //     //删除的是非叶子节点,且有两个child
-    //     if (nodeToReplace.left && nodeToReplace.right) {
-    //         this.swapNodeValue(nodeToReplace, replaceNode);
-    //         this.remove(replaceNode.value);
-    //     }
-    //     //删除的是非叶子节点,且只有1个child
-    //     if (this.nodeComparator.equal(nodeToReplace, this.root)) {
-    //         this.root = replaceNode;
-    //     }
-    // }
-
-    remove(value) {
+    remove(value, withSuccessor = true) {
         let nodeToReplace = this.find(value);
-        // const copyNodeToReplace = new BinarySearchTreeNode();
-        // copyNodeToReplace.value = nodeToReplace.value;
-        // copyNodeToReplace.left = nodeToReplace.left;
-        // copyNodeToReplace.right = nodeToReplace.right;
-        // copyNodeToReplace.parent = nodeToReplace.parent;
-        // copyNodeToReplace.meta = nodeToReplace.meta;
-        // copyNodeToReplace.nodeComparator = nodeToReplace.nodeComparator;
 
         let replaceNode = null;
         if (nodeToReplace.left && nodeToReplace.right) {
             //in this case(have right branch), the successor node must be have one or no child
-            const successorNode = this.successor(value);
-            nodeToReplace = successorNode;
-            if (successorNode.left) {
-                replaceNode = successorNode.left;
+            let preOrSuccessorNode = null;
+            if (withSuccessor) {
+                preOrSuccessorNode = this.successor(value);
             } else {
-                replaceNode = successorNode.right;
+                preOrSuccessorNode = this.predecessor(value);
             }
-        }
-        if (!nodeToReplace.left && !nodeToReplace.right) {
+            nodeToReplace = preOrSuccessorNode;
+            if (preOrSuccessorNode.left) {
+                replaceNode = preOrSuccessorNode.left;
+            } else {
+                replaceNode = preOrSuccessorNode.right;
+            }
+        } else if (!nodeToReplace.left && !nodeToReplace.right) {
             replaceNode = null;
-        }
-        if (nodeToReplace.left && !nodeToReplace.right) {
+        } else if (nodeToReplace.left && !nodeToReplace.right) {
             replaceNode = nodeToReplace.left;
-        }
-        if (!nodeToReplace.left && nodeToReplace.right) {
+        } else if (!nodeToReplace.left && nodeToReplace.right) {
             replaceNode = nodeToReplace.right;
         }
 
@@ -154,7 +95,7 @@ export default class RedBlackTree extends BinarySearchTree {
                 this.makeNodeBlack(replaceNode);
             }
         }
-        super.remove(value);
+        super.remove(value, withSuccessor);
     }
 
     fixDoubleBlack(nodeToReplace) {
@@ -169,13 +110,12 @@ export default class RedBlackTree extends BinarySearchTree {
             this.fixDoubleBlack(nodeToReplace.parent);
         } else {
             //case 2 have sibling
-
             if (this.isNodeBlack(nodeToReplace.sibling) && (this.haveRedLeftChildren(nodeToReplace.sibling)
             || this.haveRedRightChildren(nodeToReplace.sibling))) {
                 //case 2.1 sibling is black node and at least one of sibling's children is red
                 // one brach black deep +1 by this red node, that leads to balance
 
-                if (this.nodeComparator.equal(nodeToReplace.sibling, nodeToReplace.left)) {
+                if (this.nodeComparator.equal(nodeToReplace.sibling, nodeToReplace.parent.left)) {
                     if (this.haveRedLeftChildren(nodeToReplace.sibling)) {
                         //case 2.1.1 sibling is black left node and have left red or both red children
                         //make this left node as black children
@@ -185,7 +125,7 @@ export default class RedBlackTree extends BinarySearchTree {
                     } else {
                         //case 2.1.2 sibling is black left node and just have right red children
                         //make this red left children as black children
-                        this.makeNodeBlack(nodeToReplace.sibling.left);
+                        this.makeNodeBlack(nodeToReplace.sibling.right);
                         //perform left right rotation
                         this.rotateLeftLeft(nodeToReplace.sibling);
                         this.rotateRightRight(nodeToReplace.sibling.parent);
@@ -200,14 +140,13 @@ export default class RedBlackTree extends BinarySearchTree {
                     } else {
                         //case 2.1.4 sibling is black left node and just have right red children
                         //make this red right children as black children
-                        this.makeNodeBlack(nodeToReplace.sibling.right);
+                        this.makeNodeBlack(nodeToReplace.sibling.left);
                         //perform right left rotation
                         this.rotateRightRight(nodeToReplace.sibling);
                         this.rotateLeftLeft(nodeToReplace.sibling.parent);
                     }
                 }
-            }
-            if (this.isNodeBlack(nodeToReplace.sibling) && !this.haveRedLeftChildren(nodeToReplace.sibling)
+            } else if (this.isNodeBlack(nodeToReplace.sibling) && !this.haveRedLeftChildren(nodeToReplace.sibling)
             && !this.haveRedRightChildren(nodeToReplace.sibling)) {
                 //case 2.2 sibling is black node and both two children are black
                 //one branch black deep reduce one by make black Node as red node
@@ -324,7 +263,11 @@ export default class RedBlackTree extends BinarySearchTree {
         //leftNode children
         //because of rightRotation, if right children, need to move to rootNode left
         //if left children, no need to change
-        rootNode.setLeft(leftNode.right);
+        if (leftNode.right) {
+            rootNode.setLeft(leftNode.right);
+            //detach
+            leftNode.right = null;
+        }
 
         // Attach rootNode to the right of leftNode.
         leftNode.setRight(rootNode);
@@ -345,7 +288,11 @@ export default class RedBlackTree extends BinarySearchTree {
         //rightNode children
         //because of leftRotation, if left children, need to move to rootNode right
         //if right children, no need to change
-        rootNode.setRight(rightNode.left);
+        if (rightNode.left) {
+            rootNode.setRight(rightNode.left);
+            //detach
+            rightNode.left = null;
+        }
 
         // Attach rootNode to the right of leftNode.
         rightNode.setLeft(rootNode);
@@ -368,5 +315,9 @@ export default class RedBlackTree extends BinarySearchTree {
             return this.toStringWithMeta(COLOR_PROP_NAME);
         }
         return null;
+    }
+
+    paintTree() {
+        return super.paintTree(COLOR_PROP_NAME);
     }
 }

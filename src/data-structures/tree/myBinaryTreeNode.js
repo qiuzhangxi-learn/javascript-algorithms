@@ -126,7 +126,6 @@ export default class BinaryTreeNode {
         if (this.left) {
             this.left.parent = null;
         }
-
         this.left = node;
 
         if (this.left) {
@@ -139,7 +138,6 @@ export default class BinaryTreeNode {
         if (this.right) {
             this.right.parent = null;
         }
-
         this.right = node;
 
         if (this.right) {
@@ -242,24 +240,41 @@ export default class BinaryTreeNode {
         const result = [];
         const queue = new Queue();
         queue.enqueue(this);
-        result.push(this.value);
         while (!queue.isEmpty()) {
             const currentNode = queue.dequeue();
-            //result.push(currentNode.value);
+            result.push(currentNode.value);
             if (currentNode.left) {
                 result.push(currentNode.left.value);
-                queue.enqueue(currentNode.left);
-            } else {
-                result.push('null');
             }
             if (currentNode.right) {
                 result.push(currentNode.right.value);
-                queue.enqueue(currentNode.right);
-            } else {
-                result.push('null');
             }
         }
         return result;
+    }
+
+    //including null
+    printTree(metaName = null) {
+        const treeHeight = this.height;
+        const treeArray = Array(2 ** treeHeight - 1).fill(null);
+
+        const traverseInOrderWithMeta = (node, nodeIndex, meta) => {
+            if (node.left) {
+                traverseInOrderWithMeta(node.left, nodeIndex * 2 + 1, meta);
+            }
+            if (metaName) {
+                treeArray[nodeIndex] = node.value.toString() + (node.meta.get(meta) === 'red' ? 'R' : '');
+            } else {
+                treeArray[nodeIndex] = node.value.toString();
+            }
+
+            if (node.right) {
+                traverseInOrderWithMeta(node.right, nodeIndex * 2 + 2, meta);
+            }
+        };
+
+        traverseInOrderWithMeta(this, 0, metaName);
+        return treeArray;
     }
 
     isParentLeftChild() {
