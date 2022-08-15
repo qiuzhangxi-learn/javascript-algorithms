@@ -5,7 +5,7 @@
 //     redirects?: HttpReadable[];
 // }
 
-export default class GraphVertex {
+export class GraphVertex {
     constructor(value) {
         if (value === undefined) {
             throw new Error('Graph vertex must have a value');
@@ -62,14 +62,29 @@ export class Graph {
     }
 
     removeVertex(value) {
-        const removeVertex = this.nodes.get(value);
+        const adjacents = this.getAdjacents(value);
+        // adjacents.forEach((adjacent) => {
+        //     this.removeEdge(value, adjacent.value);
+        //     if (!this.isDirected) {
+        //         this.removeEdge(adjacent.value, value);
+        //     }
+        // });
+        //cannot use this method. because remove edge will change the size of adjacents that means if the size is 2, then decrease 1. it just only run one time logic content
+        const removeVertex = this.vertices.get(value);
         if (removeVertex) {
-            const allVertex = this.getAllVertex();
-            // eslint-disable-next-line no-restricted-syntax
-            for (const vertex of allVertex) {
-                vertex.removeAdjacent(removeVertex);
+            while (adjacents.length) {
+                if (adjacents.length <= 0) break;
+                this.removeEdge(value, adjacents[0].value);
             }
         }
+        // const removeVertex = this.vertices.get(value);
+        // if (removeVertex) {
+        //     const allVertex = this.getAllVertex();
+        //     // eslint-disable-next-line no-restricted-syntax
+        //     for (const vertex of allVertex) {
+        //         vertex.removeAdjacent(removeVertex);
+        //     }
+        // }
         return this.vertices.delete(value);
     }
 
@@ -101,11 +116,13 @@ export class Graph {
         const sourceVertex = this.addVertex(sourceValue);
         const destinationVertex = this.addVertex(destinationValue);
         sourceVertex.addAdjacent(destinationVertex);
-        if (!this.isDirected) {
-            destinationVertex.addAdjacent(sourceVertex);
-        }
         const edgeKey = this.getEdgeKey(sourceValue, destinationValue);
         this.edges[edgeKey] = { source: sourceVertex, destination: destinationVertex, weight: edgeWeight };
+        if (!this.isDirected) {
+            destinationVertex.addAdjacent(sourceVertex);
+            const edgeKeyReverse = this.getEdgeKey(destinationValue, sourceValue);
+            this.edges[edgeKeyReverse] = { source: destinationVertex, destination: sourceVertex, weight: edgeWeight };
+        }
         return { source: sourceVertex, destination: destinationVertex, weight: edgeWeight };
     }
 
@@ -134,6 +151,7 @@ export class Graph {
             delete this.edges[this.getEdgeKey(sourceValue, destinationValue)];
             if (!this.isDirected) {
                 destinationVertex.removeAdjacent(sourceVertex);
+                delete this.edges[this.getEdgeKey(destinationValue, sourceValue)];
             }
             return true;
         }
@@ -199,13 +217,13 @@ export class Graph {
 
     getAdjacencyMatrix() {
         const adjacencyMatrix = Array(this.vertices.size).fill(null).map(() => {
-            return Array(this.vertices.size).fill(Infinity);
+            return Array(this.vertices.size).fill(0);
         });
         const verticesIndices = this.getVerticesIndices();
-        this.getAllEdges.forEach((edge) => {
+        this.getAllEdges().forEach((edge) => {
             const rowIndex = verticesIndices[edge.source.value];
             const colIndex = verticesIndices[edge.destination.value];
-            const edgeWeight = edge.weight;
+            const edgeWeight = edge.weight ? edge.weight : 1;
             adjacencyMatrix[rowIndex][colIndex] = edgeWeight;
         });
         return adjacencyMatrix;
