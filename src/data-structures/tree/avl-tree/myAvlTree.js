@@ -21,11 +21,14 @@ export default class AvlTree extends BinarySearchTree {
      * @return {boolean}
      */
     remove(value) {
+      let currentNode = this.root.find(value).parent;
       // Do standard BST removal.
       super.remove(value);
 
-      // Balance the tree starting from the root node.
-      this.balance(this.root);
+      while (currentNode) {
+        this.balance(currentNode);
+        currentNode = currentNode.parent;
+      }
     }
 
     /**

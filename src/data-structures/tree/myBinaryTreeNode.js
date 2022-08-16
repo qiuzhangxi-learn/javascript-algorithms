@@ -70,17 +70,17 @@ export default class BinaryTreeNode {
     }
 
     nodeLeftHeight(node) {
-        if (!node || !node.left) {
+        if (!node) {
             return 0;
         }
-        return Math.max(this.nodeHeight(node.left.left), this.nodeHeight(node.left.right)) + 1;
+        return this.nodeHeight(node.left);
     }
 
     nodeRightHeight(node) {
-        if (!node || !node.right) {
+        if (!node) {
             return 0;
         }
-        return Math.max(this.nodeHeight(node.right.left), this.nodeHeight(node.right.right)) + 1;
+        return this.nodeHeight(node.right);
     }
 
     get uncle() {
