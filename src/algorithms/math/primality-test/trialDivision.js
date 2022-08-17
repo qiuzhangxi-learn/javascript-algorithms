@@ -23,7 +23,7 @@ export default function trialDivision(number) {
     return false;
   }
 
-  // If there is no dividers up to square root of n then there is no higher dividers as well.
+  // If there is no dividers up to square root of n(odd) then there is no higher dividers as well.
   const dividerLimit = Math.sqrt(number);
   for (let divider = 3; divider <= dividerLimit; divider += 2) {
     if (number % divider === 0) {

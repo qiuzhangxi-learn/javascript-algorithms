@@ -55,3 +55,10 @@ export default function integerPartition(number) {
 
   return partitionMatrix[number][number];
 }
+
+
+//note
+//partitionMatrix[m][n]
+//表示只用不大于m的数字组合成n数的组合有多少种。
+//例如 7 9
+// arr[7][9] = arr[6][9] + arr[7][2]

@@ -34,3 +34,13 @@ export default function sieveOfEratosthenes(maxNumber) {
 
   return primes;
 }
+
+// note
+//帅选法
+//2: 4 6 8 10 12...
+//3:              9   (12)  15  18  ...
+//4:                               (16) (20).....(...)
+//5:                                                       25   (30) 35......
+//6:
+//7:            49   (56)...
+

@@ -21,3 +21,5 @@ export default function fibonacciClosedForm(position) {
   // Calculate fibonacci number using Binet's formula.
   return Math.floor((phi ** position) / sqrt5 + 0.5);
 }
+//
+// Fn = [ (phi ** n) / sqrt5 + 0.5]

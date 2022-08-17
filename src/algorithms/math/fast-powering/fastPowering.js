@@ -28,3 +28,6 @@ export default function fastPowering(base, power) {
   const multiplier = fastPowering(base, Math.floor(power / 2));
   return multiplier * multiplier * base;
 }
+
+//note
+// O(log(n)) time
