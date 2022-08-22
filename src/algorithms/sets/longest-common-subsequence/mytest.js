@@ -55,6 +55,8 @@ export default function longestCommonSubsequence(set1, set2) {
     return longestSequence;
   }
 
-const set1 = "ImnotchiuzxIssac";
-const set2 = "Hmnogchiuzxgssac";
+// const set1 = "ImnotchiuzxIssac";
+// const set2 = "Hmnogchiuzxgssac";
+const set1 = "geek";
+const set2 = "eke";
 console.log(longestCommonSubsequence(set1, set2));

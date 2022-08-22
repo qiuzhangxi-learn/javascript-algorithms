@@ -66,6 +66,8 @@ export default class Knapsack {
     // we need to take the most valuable items first.
     this.sortPossibleItemsByValue();
     this.sortPossibleItemsByWeight();
+    //note:
+    //merge sort if cannot meet condition, no changes for the placement. So in here sort two times just for putting same weight but bigger value  front
 
     this.selectedItems = [];
 
