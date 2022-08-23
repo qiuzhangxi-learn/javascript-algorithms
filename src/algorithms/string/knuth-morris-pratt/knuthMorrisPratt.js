@@ -3,6 +3,7 @@
  * @param {string} word
  * @return {number[]}
  */
+//作用：用于标记如果遇到不匹配的情况下，可以从i几个位置开始搜索（前面的已满足）
 function buildPatternTable(word) {
   const patternTable = [0];
   let prefixIndex = 0;
