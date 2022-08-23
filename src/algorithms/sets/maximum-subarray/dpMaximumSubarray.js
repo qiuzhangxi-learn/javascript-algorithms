@@ -5,6 +5,7 @@
  * @param {Number[]} inputArray
  * @return {Number[]}
  */
+//该列表通常包含正数和负数以及0
 export default function dpMaximumSubarray(inputArray) {
   // We iterate through the inputArray once, using a greedy approach to keep track of the maximum
   // sum we've seen so far and the current sum.
