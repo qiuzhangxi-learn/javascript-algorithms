@@ -116,6 +116,7 @@ export default class Knapsack {
         }
       }
     }
+    console.log("knapsackMatrix:", knapsackMatrix);
 
     //////////// Knapsack.js is wrong in here
     // Now let's trace back the knapsack matrix to see what items we're going to add
@@ -137,7 +138,7 @@ export default class Knapsack {
         // Check if there are several items with the same weight but with the different values.
         // We need to add highest item in the matrix that is possible to get the highest value.
         const prevSumValue = knapsackMatrix[itemIndex - 1][weightIndex];
-        const prevPrevSumValue =  itemIndex > 1 ? knapsackMatrix[itemIndex - 2][weightIndex] : null;
+        const prevPrevSumValue = itemIndex > 1 ? knapsackMatrix[itemIndex - 2][weightIndex] : null;
         if (
           !prevSumValue
           || (prevSumValue && prevPrevSumValue !== prevSumValue)
@@ -159,9 +160,9 @@ export default class Knapsack {
     }
   }
 
-  // Solve unbounded knapsack problem.
+  // Solve bounded knapsack problem.
   // Greedy approach.
-  solveUnboundedKnapsackProblem() {
+  solveBoundedKnapsackProblem() {
     this.sortPossibleItemsByValue();
     this.sortPossibleItemsByValuePerWeightRatio();
 
@@ -177,13 +178,35 @@ export default class Knapsack {
           // If we have more items in stock then it is allowed to add
           // let's add the maximum allowed number of them.
           currentItem.quantity = currentItem.itemsInStock;
+          this.selectedItems.push(currentItem);
         } else if (maxPossibleItemsCount) {
           // In case if we don't have specified number of items in stock
           // let's add only items we have in stock.
           currentItem.quantity = maxPossibleItemsCount;
+          this.selectedItems.push(currentItem);
         }
+      }
+    }
+  }
 
-        this.selectedItems.push(currentItem);
+  // Solve bounded knapsack problem.
+  // Greedy approach.
+  solveUnBoundedKnapsackProblem() {
+    this.sortPossibleItemsByValue();
+    this.sortPossibleItemsByValuePerWeightRatio();
+
+    for (let itemIndex = 0; itemIndex < this.possibleItems.length; itemIndex += 1) {
+      if (this.totalWeight < this.weightLimit) {
+        const currentItem = this.possibleItems[itemIndex];
+
+        // Detect how much of current items we can push to knapsack.
+        const availableWeight = this.weightLimit - this.totalWeight;
+        const maxPossibleItemsCount = Math.floor(availableWeight / currentItem.weight);
+
+        if (maxPossibleItemsCount) {
+          currentItem.quantity = maxPossibleItemsCount;
+          this.selectedItems.push(currentItem);
+        }
       }
     }
   }
