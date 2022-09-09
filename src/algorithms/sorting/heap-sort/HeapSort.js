@@ -28,3 +28,9 @@ export default class HeapSort extends Sort {
     return sortedArray;
   }
 }
+
+// stable no
+//42521
+//    1
+//   2  5
+//  4 2

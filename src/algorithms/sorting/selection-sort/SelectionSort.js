@@ -30,3 +30,7 @@ export default class SelectionSort extends Sort {
     return array;
   }
 }
+
+
+// stable no
+//42521
